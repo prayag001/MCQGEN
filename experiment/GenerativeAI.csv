@@ -1,0 +1,6 @@
+MCQ,Options,Correct
+What is the primary function of generative AI?,a:Identifying and encoding patterns in data | b:Creating labeled data for training | c:Optimizing hardware for processing | d:Developing software applications,a
+Which phase of generative AI involves tailoring the foundation model to a specific application?,a:Training | b:Tuning | c:Generation | d:Evaluation,b
+What is fine-tuning in generative AI?,a:Updating the foundation model every year | b:Outsourcing data labeling tasks | c:Creating labeled data specific to the application | d:Updating the model once a week,c
+What is RLHF in generative AI?,a:A framework for extending the foundation model | b:Fine-tuning the model with human feedback | c:Creating a neural network of parameters | d:Optimizing GPU clusters,b
+What is the purpose of retrieval augmented generation (RAG) in generative AI?,a:To update the foundation model | b:To supplement and refine the model with external sources | c:To optimize processing time | d:To create labeled data,b
