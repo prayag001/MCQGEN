@@ -6,8 +6,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from src.mcqgenerator.logger import logging
 from src.mcqgenerator.utils import read_file, get_table_data
-from langchain.callbacks import get_openai_callback
-from src.mcqgenerator.MCQGenerator import generate_evaluate_chain, process_mcq_generation
+from src.mcqgenerator.MCQGenerator import process_mcq_generation
 
 # Load environment variables
 load_dotenv()
@@ -42,8 +41,7 @@ if button and uploaded_file is not None and mcq_count and subject and tone:
             # Read the uploaded file
             text = read_file(uploaded_file)
             
-            # Generate MCQs and track token usage
-            with get_openai_callback() as cb:
+            try:
                 response = process_mcq_generation(
                     text=text,
                     number=mcq_count,
@@ -51,15 +49,26 @@ if button and uploaded_file is not None and mcq_count and subject and tone:
                     tone=tone,
                     response_json=RESPONSE_JSON
                 )
+            except Exception as e:
+                if "Error processing quiz response" in str(e):
+                    st.error("⚠️ The MCQ generation produced invalid output. Retrying...")
+                    # Retry once with the same parameters
+                    response = process_mcq_generation(
+                        text=text,
+                        number=mcq_count,
+                        subject=subject,
+                        tone=tone,
+                        response_json=RESPONSE_JSON
+                    )
+                else:
+                    raise e
                 
         except Exception as e:
             st.error(f"Error: {str(e)}")
-            if "Invalid JSON format" in str(e):
-                st.error("The MCQ generation produced invalid JSON. Please try again.")
-                if "Response was:" in str(e):
-                    st.write("Debug: Raw response received:")
-                    st.code(str(e).split("Response was:", 1)[1])
+            if "Error processing quiz response" in str(e):
+                st.error("The quiz output format was invalid. Please try again.")
             logging.error(f"Error during MCQ generation: {str(e)}")
+            st.stop()
         else:
             if isinstance(response, dict):
                 # Extract quiz from response
@@ -92,13 +101,6 @@ if button and uploaded_file is not None and mcq_count and subject and tone:
                             st.subheader("Review")
                             st.text_area(label="", value=response["review"], height=200)
                             
-                            # Display token usage
-                            st.divider()
-                            st.markdown("### Token Usage Information")
-                            st.write(f"Total Tokens Used: {cb.total_tokens}")
-                            st.write(f"Prompt Tokens: {cb.prompt_tokens}")
-                            st.write(f"Completion Tokens: {cb.completion_tokens}")
-                            st.write(f"Total Cost (USD): ${cb.total_cost:.4f}")
                         else:
                             st.error("Failed to process the quiz data.")
                             st.write("Debug: Quiz structure received:")

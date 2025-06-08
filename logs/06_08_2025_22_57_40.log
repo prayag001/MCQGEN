@@ -1,0 +1,2 @@
+[2025-06-08 22:57:58,364] 1025 httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 401 Unauthorized"
+[2025-06-08 22:57:58,369] 73 root - ERROR - Error during MCQ generation: Error generating quiz: Error code: 401 - {'error': {'message': 'Incorrect API key provided: AIzaSyBs***************************_9q0. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'param': None, 'code': 'invalid_api_key'}}
