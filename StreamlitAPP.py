@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from src.mcqgenerator.logger import logging
 from src.mcqgenerator.utils import read_file, get_table_data
 from langchain.callbacks import get_openai_callback
-from src.mcqgenerator.MCQGenerator import generate_evaluate_chain
+from src.mcqgenerator.MCQGenerator import generate_evaluate_chain, process_mcq_generation
 
 # Load environment variables
 load_dotenv()
@@ -44,7 +44,7 @@ if button and uploaded_file is not None and mcq_count and subject and tone:
             
             # Generate MCQs and track token usage
             with get_openai_callback() as cb:
-                response = generate_evaluate_chain(
+                response = process_mcq_generation(
                     text=text,
                     number=mcq_count,
                     subject=subject,
@@ -54,34 +54,63 @@ if button and uploaded_file is not None and mcq_count and subject and tone:
                 
         except Exception as e:
             st.error(f"Error: {str(e)}")
+            if "Invalid JSON format" in str(e):
+                st.error("The MCQ generation produced invalid JSON. Please try again.")
+                if "Response was:" in str(e):
+                    st.write("Debug: Raw response received:")
+                    st.code(str(e).split("Response was:", 1)[1])
             logging.error(f"Error during MCQ generation: {str(e)}")
-            st.error("An error occurred while generating MCQs. Please try again.")
         else:
             if isinstance(response, dict):
                 # Extract quiz from response
                 quiz = response.get("quiz", None)
                 if quiz is not None:
-                    table_data = get_table_data(quiz)
-                    if table_data:
-                        df = pd.DataFrame(table_data)
-                        df.index = df.index + 1
-                        st.table(df)
-                        
-                        # Display review
-                        st.subheader("Review")
-                        st.text_area(label="", value=response["review"], height=200)
-                        
-                        # Display token usage
-                        st.divider()
-                        st.markdown("### Token Usage Information")
-                        st.write(f"Total Tokens Used: {cb.total_tokens}")
-                        st.write(f"Prompt Tokens: {cb.prompt_tokens}")
-                        st.write(f"Completion Tokens: {cb.completion_tokens}")
-                        st.write(f"Total Cost (USD): ${cb.total_cost:.4f}")
-                    else:
-                        st.error("Failed to process the quiz data. Please try again.")
+                    try:
+                        # Quiz is already validated at this point
+                        table_data = get_table_data(quiz)
+                        if table_data:
+                            st.subheader("Generated MCQs")
+                            # Create DataFrame and set column names explicitly
+                            df = pd.DataFrame(table_data)
+                            df.index = df.index + 1
+                            
+                            # Rename columns for better display
+                            df.columns = ['Question', 'Options', 'Answer']
+                            
+                            # Apply custom styling to the table
+                            st.markdown("""
+                                <style>
+                                    .dataframe {width: 100% !important}
+                                    .dataframe td {text-align: left !important; white-space: normal !important;}
+                                    .dataframe th {text-align: left !important;}
+                                </style>
+                            """, unsafe_allow_html=True)
+                            
+                            st.table(df)
+                            
+                            # Display review
+                            st.subheader("Review")
+                            st.text_area(label="", value=response["review"], height=200)
+                            
+                            # Display token usage
+                            st.divider()
+                            st.markdown("### Token Usage Information")
+                            st.write(f"Total Tokens Used: {cb.total_tokens}")
+                            st.write(f"Prompt Tokens: {cb.prompt_tokens}")
+                            st.write(f"Completion Tokens: {cb.completion_tokens}")
+                            st.write(f"Total Cost (USD): ${cb.total_cost:.4f}")
+                        else:
+                            st.error("Failed to process the quiz data.")
+                            st.write("Debug: Quiz structure received:")
+                            st.json(quiz)
+                    except Exception as e:
+                        st.error(f"Error displaying quiz: {str(e)}")
+                        st.write("Debug info:")
+                        st.write(f"Quiz type: {type(quiz)}")
+                        st.write("Quiz content:")
+                        st.code(quiz)
                 else:
-                    st.error("No quiz was generated. Please check your inputs and try again.")
+                    st.error("No quiz data found in the response.")
             else:
                 st.error("Received an invalid response format. Please try again.")
 elif button:
