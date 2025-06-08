@@ -1,0 +1,1 @@
+[2025-06-08 22:15:56,241] 57 root - ERROR - Error during MCQ generation: Chain.__call__() got an unexpected keyword argument 'text'

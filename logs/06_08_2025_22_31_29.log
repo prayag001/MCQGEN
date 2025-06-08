@@ -1,0 +1,1 @@
+[2025-06-08 22:31:31,778] 57 root - ERROR - Error during MCQ generation: generate_evaluate_chain() missing 4 required positional arguments: 'number', 'subject', 'tone', and 'response_json'

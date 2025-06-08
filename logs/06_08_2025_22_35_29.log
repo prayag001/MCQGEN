@@ -1,0 +1,53 @@
+[2025-06-08 22:35:39,523] 62 root - ERROR - Error during MCQ generation: Error generating quiz: Invalid JSON format: Expecting ',' delimiter: line 23 column 37 (char 691)
+Response was: {
+    "1": {
+        "mcq": "What is the purpose of a Constitution in a democratic country?",
+        "options": {
+            "a": "To establish a monarchy",
+            "b": "To lay out rules and principles for governance",
+            "c": "To promote dictatorship",
+            "d": "To ignore the rights of citizens"
+        },
+        "correct": "b"
+    },
+    "2": {
+        "mcq": "Which of the following is a key feature of the Indian Constitution?",
+        "options": {
+            "a": "Monarchy",
+            "b": "Federalism",
+            "c": "Dictatorship",
+            "d": "Oligarchy"
+        },
+        "correct": "b"
+    },
+    "3": {
+        "mcq": "What does the term "Separation of Powers" refer to in the Indian Constitution?",
+        "options": {
+            "a": "Combining all powers in one branch of government",
+            "b": "Exercising the same powers by all branches of government",
+            "c": "Dividing powers among different branches of government",
+            "d": "Ignoring powers of government branches"
+        },
+        "correct": "c"
+    },
+    "4": {
+        "mcq": "Which Fundamental Right guarantees the right to freedom of religion in India?",
+        "options": {
+            "a": "Right to Equality",
+            "b": "Right to Freedom",
+            "c": "Right against Exploitation",
+            "d": "Right to Freedom of Religion"
+        },
+        "correct": "d"
+    },
+    "5": {
+        "mcq": "What is the significance of Directive Principles of State Policy in the Indian Constitution?",
+        "options": {
+            "a": "To protect Fundamental Rights",
+            "b": "To ensure social and economic reforms",
+            "c": "To limit representation",
+            "d": "To promote dictatorship"
+        },
+        "correct": "b"
+    }
+}

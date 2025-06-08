@@ -1,0 +1,1 @@
+[2025-06-08 22:33:31,315] 57 root - ERROR - Error during MCQ generation: Error generating quiz: Invalid JSON format: Expecting ',' delimiter: line 43 column 37 (char 1687)
